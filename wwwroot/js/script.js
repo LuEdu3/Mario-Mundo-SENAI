@@ -5,7 +5,28 @@ const clouds = document.querySelector('.clouds'); // caso tenha clouds no HTML
 let score = 0;
 let canScore = true;
 
+// Impede o jogo de começar antes do nome
+let gameStarted = false;
+
+// Tela de nome do usuário
+const userFormOverlay = document.querySelector('.user-form-overlay');
+const userForm = document.querySelector('.user-form');
+const usernameInput = document.getElementById('username');
+let playerName = '';
+
+userForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    playerName = usernameInput.value.trim();
+    if (playerName.length > 0) {
+        userFormOverlay.classList.remove('active');
+        gameStarted = true;
+    } else {
+        usernameInput.focus();
+    }
+});
+
 const jump = () => {
+    if (!gameStarted) return;
     mario.classList.add('jump');
 
     setTimeout(() => {

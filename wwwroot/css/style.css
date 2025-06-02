@@ -165,6 +165,76 @@
     font-size: 1.1em;
 }
 
+.user-form-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.user-form-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.user-form {
+    background: #222;
+    padding: 40px 30px 30px 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-form label {
+    color: #ffe600;
+    font-family: 'Press Start 2P', Arial, sans-serif;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.user-form input {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 2px solid #ffe600;
+    outline: none;
+    font-family: 'Press Start 2P', Arial, sans-serif;
+    background: #fff;
+    color: #222;
+    width: 220px;
+    text-align: center;
+}
+
+.user-form button {
+    font-family: 'Press Start 2P', Arial, sans-serif;
+    font-size: 1.1rem;
+    background: #ffe600;
+    color: #222;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 30px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.user-form button:hover {
+    background: #ffb800;
+}
+
 @keyframes pipe-animation {
     from {
         right: 0;
