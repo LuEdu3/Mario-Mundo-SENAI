@@ -15,8 +15,10 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-app.MapControllers();
+// Serve arquivos estáticos da pasta wwwroot
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
-app.MapGet("/", () => "Hello World!");
+app.MapControllers();
 
 app.Run();

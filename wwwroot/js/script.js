@@ -37,7 +37,7 @@ const loop = setInterval(() => {
 
         mario.style.animation = 'none';
         mario.style.bottom = `${marioPosition}px`;
-        mario.src = './img/game-over.png';
+        mario.src = '../img/game-over.png';
         mario.style.width = '75px';
         mario.style.marginLeft = '50px';
 
@@ -48,7 +48,7 @@ const loop = setInterval(() => {
 
         // Mostra a tela de Game Over
         const gameOver = document.querySelector('.game-over');
-        if (gameOver) gameOver.style.display = 'flex';
+        if (gameOver) gameOver.classList.add('active');
 
         clearInterval(loop);
     }
