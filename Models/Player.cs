@@ -19,6 +19,7 @@ namespace MarioMundoSenai.Models
         [Key]
         public int Id { get; set; }
         public int Pontos { get; set; }
+        [Column("player_id")]
         public int PlayerId { get; set; }
         [ForeignKey("PlayerId")]
         public Player Player { get; set; }
