@@ -15,12 +15,16 @@ const userForm = document.querySelector('.user-form');
 const usernameInput = document.getElementById('username');
 let playerName = '';
 
+// Flag para evitar múltiplos game over
+let gameOverFlag = false;
+
 userForm.addEventListener('submit', function (e) {
     e.preventDefault();
     playerName = usernameInput.value.trim();
     if (playerName.length > 0) {
         userFormOverlay.classList.remove('active');
         gameStarted = true;
+        gameOverFlag = false;
         // Inicia o loop do jogo só após o nome ser confirmado
         loop = setInterval(gameLoop, 10);
     } else {
@@ -67,23 +71,27 @@ function gameLoop() {
         setTimeout(() => canScore = true, 1200);
     }
     if (pipePosition <= 120 && pipePosition > 0 && marioPosition < 80) {
-        pipe.style.animation = 'none';
-        pipe.style.left = `${pipePosition}px`;
-        mario.style.animation = 'none';
-        mario.style.bottom = `${marioPosition}px`;
-        mario.src = '../img/game-over.png';
-        mario.style.width = '75px';
-        mario.style.marginLeft = '50px';
-        if (clouds) {
-            clouds.style.animation = 'none';
+        // Garante que só executa o game over uma vez
+        if (!gameOverFlag) {
+            gameOverFlag = true;
+            pipe.style.animation = 'none';
+            pipe.style.left = `${pipePosition}px`;
+            mario.style.animation = 'none';
+            mario.style.bottom = `${marioPosition}px`;
+            mario.src = '../img/game-over.png';
+            mario.style.width = '75px';
+            mario.style.marginLeft = '50px';
+            if (clouds) {
+                clouds.style.animation = 'none';
+            }
+            const gameOver = document.querySelector('.game-over');
+            if (gameOver) gameOver.classList.add('active');
+            enviarPontuacao(playerName, score).then(atualizarLeaderboard);
+            // Após o game over, zera o score para a próxima rodada
+            score = 0;
+            updateScore();
+            clearInterval(loop);
         }
-        const gameOver = document.querySelector('.game-over');
-        if (gameOver) gameOver.classList.add('active');
-        enviarPontuacao(playerName, score).then(atualizarLeaderboard);
-        // Após o game over, zera o score para a próxima rodada
-        score = 0;
-        updateScore();
-        clearInterval(loop);
     }
 }
 
