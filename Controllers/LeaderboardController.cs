@@ -18,17 +18,18 @@ namespace MarioMundoSenai.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTop3()
+        public IActionResult GetTop3()
         {
             // Seleciona a maior pontuação de cada jogador
-            var top3 = await _context.Pontuacoes
+            var top3 = _context.Pontuacoes
                 .Include(p => p.Player)
+                .AsEnumerable() // Traz para memória, o resto roda em LINQ to Objects
                 .GroupBy(p => p.PlayerId)
-                .Select(g => g.OrderByDescending(p => p.Pontos).First())
-                .OrderByDescending(p => p.Pontos)
+                .Select(g => g.OrderByDescending(e => e.Pontos).First())
+                .OrderByDescending(e => e.Pontos)
                 .Take(3)
                 .Select(p => new { nome = p.Player != null ? p.Player.Nome : string.Empty, pontos = p.Pontos })
-                .ToListAsync();
+                .ToList();
             return Ok(top3);
         }
 
