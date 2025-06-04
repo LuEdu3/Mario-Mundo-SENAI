@@ -48,15 +48,40 @@ async function enviarPontuacao(nome, pontos) {
 async function atualizarLeaderboard() {
     const resp = await fetch('/api/Leaderboard');
     const data = await resp.json();
+
+    // Atualiza o pódio visual
+    const podium1Name = document.getElementById('podium-1-name');
+    const podium1Score = document.getElementById('podium-1-score');
+    const podium2Name = document.getElementById('podium-2-name');
+    const podium2Score = document.getElementById('podium-2-score');
+    const podium3Name = document.getElementById('podium-3-name');
+    const podium3Score = document.getElementById('podium-3-score');
+
+    if (podium1Name && podium1Score) {
+        podium1Name.textContent = data[0]?.nome || '';
+        podium1Score.textContent = data[0]?.pontos !== undefined ? data[0].pontos : '';
+    }
+    if (podium2Name && podium2Score) {
+        podium2Name.textContent = data[1]?.nome || '';
+        podium2Score.textContent = data[1]?.pontos !== undefined ? data[1].pontos : '';
+    }
+    if (podium3Name && podium3Score) {
+        podium3Name.textContent = data[2]?.nome || '';
+        podium3Score.textContent = data[2]?.pontos !== undefined ? data[2].pontos : '';
+    }
+
+    // (Opcional) Atualiza lista antiga, se ainda existir
     const ol = document.querySelector('.leaderboard ol');
-    ol.innerHTML = '';
-    data.forEach((item, idx) => {
-        let medalha = '';
-        if (idx === 0) medalha = '<span class="gold">1º</span>';
-        else if (idx === 1) medalha = '<span class="silver">2º</span>';
-        else if (idx === 2) medalha = '<span class="bronze">3º</span>';
-        ol.innerHTML += `<li>${medalha} ${item.nome} - ${item.pontos}</li>`;
-    });
+    if (ol) {
+        ol.innerHTML = '';
+        data.forEach((item, idx) => {
+            let medalha = '';
+            if (idx === 0) medalha = '<span class="gold">1º</span>';
+            else if (idx === 1) medalha = '<span class="silver">2º</span>';
+            else if (idx === 2) medalha = '<span class="bronze">3º</span>';
+            ol.innerHTML += `<li>${medalha} ${item.nome} - ${item.pontos}</li>`;
+        });
+    }
 }
 
 // Função do loop do jogo

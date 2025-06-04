@@ -14,12 +14,24 @@
 <body>
     <div class="container">
         <div class="leaderboard">
-            <h2>🏆 Podium</h2>
-            <ol>
-                <li><span class="gold">1º</span> Jogador 1 - 999</li>
-                <li><span class="silver">2º</span> Jogador 2 - 800</li>
-                <li><span class="bronze">3º</span> Jogador 3 - 600</li>
-            </ol>
+            <h2>🏆 Pódio</h2>
+            <div class="podium">
+                <div class="podium-place second">
+                    <div class="podium-block">2</div>
+                    <div class="podium-name" id="podium-2-name"></div>
+                    <div class="podium-score" id="podium-2-score"></div>
+                </div>
+                <div class="podium-place first">
+                    <div class="podium-block">1</div>
+                    <div class="podium-name" id="podium-1-name"></div>
+                    <div class="podium-score" id="podium-1-score"></div>
+                </div>
+                <div class="podium-place third">
+                    <div class="podium-block">3</div>
+                    <div class="podium-name" id="podium-3-name"></div>
+                    <div class="podium-score" id="podium-3-score"></div>
+                </div>
+            </div>
         </div>
         <div>
             <div class="game-board">
