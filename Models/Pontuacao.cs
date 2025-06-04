@@ -3,6 +3,7 @@ using MarioMundoSenai.Models;
 
 namespace MarioMundoSenai.Models
 {
+    [Table("pontuacao", Schema = "Mario_mundo_senai")]
     public class Pontuacao
     {
         public int Id { get; set; }
