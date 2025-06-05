@@ -1,6 +1,7 @@
 const mario = document.querySelector('.mario');
 const clouds = document.querySelector('.clouds'); // caso tenha clouds no HTML
 const gameBoard = document.querySelector('.game-board');
+const pipe = document.querySelector('.pipe'); // Adicionado para garantir funcionamento
 
 let score = 0;
 let canScore = true;
@@ -9,6 +10,7 @@ let gameOverFlag = false;
 let isJumping = false;
 let animationFrameId = null;
 let canCollide = false; // novo controle para colisão
+let loop = null; // Corrigido: declaração da variável loop
 
 const userFormOverlay = document.querySelector('.user-form-overlay');
 const userForm = document.querySelector('.user-form');
@@ -16,7 +18,13 @@ const usernameInput = document.getElementById('username');
 let playerName = '';
 
 // Flag para evitar múltiplos game over
-let gameOverFlag = false;
+
+// Áudios
+const audioFundo = new Audio('audio/fundo-mario.mp3');
+const audioPulo = new Audio('audio/jump-mario.mp3');
+const audioGameOver = new Audio('audio/game-over.mp3');
+
+audioFundo.loop = true;
 
 userForm.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -25,8 +33,10 @@ userForm.addEventListener('submit', function (e) {
         userFormOverlay.classList.remove('active');
         gameStarted = true;
         gameOverFlag = false;
-        // Inicia o loop do jogo só após o nome ser confirmado
+        if (loop) clearInterval(loop); // Garante que não há loop antigo
         loop = setInterval(gameLoop, 10);
+        audioFundo.currentTime = 0;
+        audioFundo.play(); // Toca música de fundo
     } else {
         usernameInput.focus();
     }
@@ -118,7 +128,6 @@ function gameLoop() {
         setTimeout(() => canScore = true, 1200);
     }
     if (pipePosition <= 120 && pipePosition > 0 && marioPosition < 80) {
-        // Garante que só executa o game over uma vez
         if (!gameOverFlag) {
             gameOverFlag = true;
             pipe.style.animation = 'none';
@@ -133,8 +142,10 @@ function gameLoop() {
             }
             const gameOver = document.querySelector('.game-over');
             if (gameOver) gameOver.classList.add('active');
+            audioFundo.pause();
+            audioGameOver.currentTime = 0;
+            audioGameOver.play(); // Toca som de game over
             enviarPontuacao(playerName, score).then(atualizarLeaderboard);
-            // Após o game over, zera o score para a próxima rodada
             score = 0;
             updateScore();
             clearInterval(loop);
@@ -145,7 +156,8 @@ function gameLoop() {
 const jump = () => {
     if (!gameStarted) return;
     mario.classList.add('jump');
-
+    audioPulo.currentTime = 0;
+    audioPulo.play(); // Toca som de pulo
     setTimeout(() => {
         mario.classList.remove('jump');
     }, 600);
@@ -156,6 +168,14 @@ const updateScore = () => {
 };
 
 document.addEventListener('keydown', jump);
+
+// Função para reiniciar o jogo ao clicar no botão
+const restartBtn = document.querySelector('.restart-btn');
+if (restartBtn) {
+    restartBtn.addEventListener('click', function () {
+        window.location.reload(); // Equivalente ao F5
+    });
+}
 
 // Atualiza leaderboard ao carregar
 atualizarLeaderboard();

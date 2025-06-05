@@ -20,14 +20,9 @@ namespace MarioMundoSenai.Controllers
         [HttpGet]
         public IActionResult GetTop3()
         {
-            // Seleciona a maior pontuação de cada jogador
             var top3 = _context.Pontuacoes
                 .Include(p => p.Player)
-<<<<<<< HEAD
-                .AsEnumerable() // Traz para memória antes de agrupar
-=======
-                .AsEnumerable() // Traz para memória, o resto roda em LINQ to Objects
->>>>>>> 2051a88507932fe4988c3baf1c80bc4bd8d53327
+                .AsEnumerable()
                 .GroupBy(p => p.PlayerId)
                 .Select(g => g.OrderByDescending(e => e.Pontos).First())
                 .OrderByDescending(e => e.Pontos)
@@ -40,12 +35,10 @@ namespace MarioMundoSenai.Controllers
         [HttpPost]
         public async Task<IActionResult> PostPontuacao([FromBody] Pontuacao pontuacao)
         {
-            // Garante que o nome não é nulo
             var nome = pontuacao.Player != null ? pontuacao.Player.Nome : string.Empty;
             if (string.IsNullOrWhiteSpace(nome))
                 return BadRequest("Nome do jogador é obrigatório.");
             int pontos = pontuacao.Pontos;
-            // Busca ou cria o jogador
             var player = await _context.Players.FirstOrDefaultAsync(p => p.Nome == nome);
             if (player == null)
             {
@@ -53,7 +46,6 @@ namespace MarioMundoSenai.Controllers
                 _context.Players.Add(player);
                 await _context.SaveChangesAsync();
             }
-            // Salva a pontuação
             var novaPontuacao = new MarioMundoSenai.Models.Pontuacao
             {
                 Pontos = pontos,
