@@ -17,6 +17,7 @@ let playerName = '';
 
 // Flag para evitar múltiplos game over
 let gameOverFlag = false;
+let playerLives = 3;
 
 userForm.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -25,12 +26,35 @@ userForm.addEventListener('submit', function (e) {
         userFormOverlay.classList.remove('active');
         gameStarted = true;
         gameOverFlag = false;
-        // Inicia o loop do jogo só após o nome ser confirmado
-        loop = setInterval(gameLoop, 10);
+        playerLives = 3; // Reseta vidas ao novo nick
+        updateLives();
+        resetGame(); // <-- Adicione esta linha!
     } else {
         usernameInput.focus();
     }
 });
+
+function updateLives() {
+    let livesEl = document.querySelector('.lives');
+    if (!livesEl) {
+        livesEl = document.createElement('div');
+        livesEl.className = 'lives';
+        document.body.appendChild(livesEl);
+    }
+    livesEl.textContent = `Vidas: ${playerLives}`;
+    livesEl.style.position = 'fixed';
+    livesEl.style.top = '20px';
+    livesEl.style.left = '30px'; // Alinha à esquerda
+    livesEl.style.right = '';
+    livesEl.style.fontSize = '2rem';
+    livesEl.style.color = '#fff';
+    livesEl.style.textShadow = '2px 2px 4px #000';
+}
+
+function hideLives() {
+    const livesEl = document.querySelector('.lives');
+    if (livesEl) livesEl.remove();
+}
 
 // Função para enviar a pontuação ao backend
 async function enviarPontuacao(nome, pontos) {
@@ -98,27 +122,135 @@ function gameLoop() {
     if (pipePosition <= 120 && pipePosition > 0 && marioPosition < 80) {
         // Garante que só executa o game over uma vez
         if (!gameOverFlag) {
-            gameOverFlag = true;
-            pipe.style.animation = 'none';
-            pipe.style.left = `${pipePosition}px`;
-            mario.style.animation = 'none';
-            mario.style.bottom = `${marioPosition}px`;
-            mario.src = '../img/game-over.png';
-            mario.style.width = '75px';
-            mario.style.marginLeft = '50px';
-            if (clouds) {
-                clouds.style.animation = 'none';
-            }
-            const gameOver = document.querySelector('.game-over');
-            if (gameOver) gameOver.classList.add('active');
-            enviarPontuacao(playerName, score).then(atualizarLeaderboard);
-            // Após o game over, zera o score para a próxima rodada
-            score = 0;
-            updateScore();
-            clearInterval(loop);
+            gameOver();
         }
     }
 }
+
+function gameOver() {
+    gameOverFlag = true;
+    pipe.style.animation = 'none';
+    mario.style.animation = 'none';
+    mario.style.bottom = window.getComputedStyle(mario).bottom;
+    mario.src = 'img/game-over.png';
+    mario.style.width = '75px';
+    // Mostra tela de game over
+    const gameOverScreen = document.querySelector('.game-over');
+    if (gameOverScreen) {
+        gameOverScreen.classList.add('active');
+        // Ativa o leaderboard dentro do game over
+        const leaderboard = gameOverScreen.querySelector('.leaderboard');
+        if (leaderboard) leaderboard.classList.add('active');
+    }
+    enviarPontuacao(playerName, score).then(atualizarLeaderboard);
+    // Após o game over, zera o score para a próxima rodada
+    score = 0;
+    updateScore();
+    clearInterval(loop);
+    // DECREMENTA AQUI!
+    playerLives--;
+    updateLives();
+    if (playerLives <= 0) {
+        setTimeout(() => {
+            hideLives();
+            voltarParaTelaNome();
+        }, 1200); // Dá tempo de ver o game over
+    }
+}
+
+function resetGame() {
+    // Se vidas acabaram, não reinicia o jogo
+    if (playerLives <= 0) return;
+    // Esconde tela de game over e leaderboard
+    const gameOverScreen = document.querySelector('.game-over');
+    if (gameOverScreen) {
+        gameOverScreen.classList.remove('active');
+        const leaderboard = gameOverScreen.querySelector('.leaderboard');
+        if (leaderboard) leaderboard.classList.remove('active');
+    }
+    // Resetar variáveis de controle
+    gameOverFlag = false;
+    score = 0;
+    updateScore();
+    canScore = true;
+    gameStarted = true;
+    // Resetar Mario
+    mario.src = 'img/mario.gif';
+    mario.style.width = '150px';
+    mario.style.bottom = '0px';
+    mario.classList.remove('jump');
+    mario.style.animation = '';
+
+    // Resetar Pipe
+    pipe.style.animation = 'none';
+    void pipe.offsetWidth; // Força reflow para reiniciar animação
+    pipe.style.left = '';
+    pipe.style.animation = 'pipe-animation 1.5s infinite linear';
+
+    // Resetar Clouds (se houver)
+    if (clouds) {
+        clouds.style.animation = 'none';
+        void clouds.offsetWidth;
+        clouds.style.left = '';
+        clouds.style.animation = 'clouds-animation 20s linear infinite';
+    }
+
+    // Reinicia o loop do jogo
+    clearInterval(loop);
+    loop = setInterval(gameLoop, 10);
+    // Se vidas acabaram após reiniciar, volta para tela de nome
+    if (playerLives <= 0) {
+        setTimeout(() => {
+            hideLives();
+            voltarParaTelaNome();
+        }, 1200);
+    }
+}
+
+function voltarParaTelaNome() {
+    // Esconde game over e leaderboard
+    const gameOverScreen = document.querySelector('.game-over');
+    if (gameOverScreen) {
+        gameOverScreen.classList.remove('active');
+        const leaderboard = gameOverScreen.querySelector('.leaderboard');
+        if (leaderboard) leaderboard.classList.remove('active');
+    }
+    // Mostra tela de nome
+    userFormOverlay.classList.add('active');
+    usernameInput.value = '';
+    usernameInput.focus();
+    gameStarted = false;
+    hideLives();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const restartBtn = document.querySelector('.restart-btn');
+    if (restartBtn) {
+        restartBtn.addEventListener('click', function () {
+            if (playerLives > 0) resetGame();
+        });
+    }
+});
+
+document.addEventListener('keydown', function(e) {
+    // Se a tela de nome estiver ativa, não faz nada
+    if (document.querySelector('.user-form-overlay.active')) return;
+    // Se a tela de game over estiver ativa
+    if (document.querySelector('.game-over.active')) {
+        // Enter reinicia se ainda houver vidas
+        if (e.code === 'Enter' && playerLives > 0) {
+            resetGame();
+        }
+        // Não permite pulo enquanto game over está ativo
+        return;
+    }
+    // Só permite pulo se o jogo estiver ativo
+    if (!gameStarted) return;
+    // Só pula com Espaço ou Seta para cima
+    if (e.code === 'Space' || e.code === 'ArrowUp') {
+        jump();
+    }
+});
 
 const jump = () => {
     if (!gameStarted) return;
@@ -133,7 +265,6 @@ const updateScore = () => {
     document.querySelector('.score').textContent = score;
 };
 
-document.addEventListener('keydown', jump);
-
 // Atualiza leaderboard ao carregar
 atualizarLeaderboard();
+updateLives();
