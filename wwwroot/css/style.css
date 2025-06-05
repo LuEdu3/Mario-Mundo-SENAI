@@ -26,6 +26,7 @@ body, html {
 }
 
 .game-board {
+<<<<<<< HEAD
     width: 100vw;
     height: calc(100vh - 90px);
     margin: 0;
@@ -35,6 +36,18 @@ body, html {
     background: url('../img/background.png') repeat-x #5c94fc;
     background-size: auto 100%;
     animation: bg-move 20s linear infinite;
+=======
+    width: 1000px;
+    max-width: 100vw;
+    height: 500px;
+    border: 1px solid #333;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    background: url('../img/background.png') no-repeat center center #5c94fc;
+    background-size: cover;
+    animation: bg-move 10s linear infinite;
+>>>>>>> 2051a88507932fe4988c3baf1c80bc4bd8d53327
 }
 
 .pipe {
@@ -131,13 +144,24 @@ body, html {
     user-select: none;
 }
 
+/* Animação suave para o chão */
 .ground {
+<<<<<<< HEAD
     width: 100vw;
     height: 90px;
     margin: 0;
     background: url('../img/ground.jpg') repeat-x;
     background-size: auto 100%;
     animation: ground-move 4s linear infinite;
+=======
+    width: 1000px;
+    max-width: 100vw;
+    height: 90px;
+    margin: 0 auto;
+    background: url('../img/ground.jpg') repeat-x;
+    background-size: auto 100%;
+    animation: ground-move 2s linear infinite;
+>>>>>>> 2051a88507932fe4988c3baf1c80bc4bd8d53327
     pointer-events: none;
     border: none;
 }
@@ -150,6 +174,7 @@ body, html {
     width: 100vw;
     min-height: 100vh;
     background: #fff;
+    gap: 40px;
 }
 
 .leaderboard {
@@ -383,12 +408,12 @@ body, html {
 }
 
 @keyframes pipe-animation {
-    from {
-        right: 0;
+    0% {
+        right: -80px;
     }
 
-    to {
-        right: 100%;
+    100% {
+        right: 100vw;
     }
 }
 
@@ -397,12 +422,16 @@ body, html {
         bottom: 0;
     }
 
-    40% {
-        bottom: 250px;
+    30% {
+        bottom: 180px; /* Aumentei de 120px para 180px */
     }
 
     50% {
-        bottom: 250px;
+        bottom: 180px;
+    }
+
+    70% {
+        bottom: 180px;
     }
 
     100% {
@@ -431,11 +460,32 @@ body, html {
 }
 
 @keyframes ground-move {
-    from {
+    0% {
         background-position-x: 0;
     }
 
-    to {
+    100% {
         background-position-x: -1000px;
+    }
+}
+
+/* Responsividade e centralização do layout */
+@media (max-width: 1200px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+    }
+
+    .leaderboard {
+        margin: 30px 0 0 0;
+        width: 90vw;
+        max-width: 500px;
+    }
+
+    .game-board,
+    .ground {
+        width: 90vw;
+        max-width: 1000px;
     }
 }

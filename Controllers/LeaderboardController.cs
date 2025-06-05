@@ -23,7 +23,11 @@ namespace MarioMundoSenai.Controllers
             // Seleciona a maior pontuação de cada jogador
             var top3 = _context.Pontuacoes
                 .Include(p => p.Player)
+<<<<<<< HEAD
                 .AsEnumerable() // Traz para memória antes de agrupar
+=======
+                .AsEnumerable() // Traz para memória, o resto roda em LINQ to Objects
+>>>>>>> 2051a88507932fe4988c3baf1c80bc4bd8d53327
                 .GroupBy(p => p.PlayerId)
                 .Select(g => g.OrderByDescending(e => e.Pontos).First())
                 .OrderByDescending(e => e.Pontos)
